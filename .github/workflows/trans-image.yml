@@ -1,0 +1,24 @@
+name: trans-on-create-branch
+on:
+  create
+
+jobs:
+  pull_and_push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clean up Docker to free space
+        run: |
+          docker system prune -a -f
+          docker volume prune -f
+      - name: Pull Docker image
+        run: |
+          docker pull ${github.ref}
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push Docker image
+        run: |
+          docker push ${github.ref}
