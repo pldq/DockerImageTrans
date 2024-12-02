@@ -4,7 +4,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ env.REGISTRY }}/${{ github.actor }}/${{ github.ref_name }}
+  IMAGE_NAME: ${{ REGISTRY }}/${{ github.actor }}/${{ github.ref_name }}
 
 jobs:
   pull_and_push:
