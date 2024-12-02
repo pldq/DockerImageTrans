@@ -9,7 +9,7 @@ jobs:
   pull_and_push:
     runs-on: ubuntu-latest
     env:
-      IMAGE_PREFIX: ${{ env.REGISTRY }}/${{ github.actor }}-
+      IMAGE_PREFIX: ${{ REGISTRY }}/${{ github.actor }}-
     steps:
       - name: Clean up Docker to free space
         run: |
