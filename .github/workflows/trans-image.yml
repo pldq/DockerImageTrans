@@ -4,11 +4,12 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.actor }}-${{ github.ref_name }}
 
 jobs:
   pull_and_push:
     runs-on: ubuntu-latest
+    env:
+      IMAGE_PREFIX: ${{ env.REGISTRY }}/${{ github.actor }}-
     steps:
       - name: Clean up Docker to free space
         run: |
@@ -23,9 +24,9 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: reTag Docker image
+      - name: reTag and push Docker image
         run: |
-          docker tag ${{ github.ref_name }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-      - name: Build and push Docker image
-        run: |
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          image_name=$(basename "${{ github.ref_name }}")
+          echo "image name is: $image_name"
+          docker tag ${{ github.ref_name }} ${{ env.IMAGE_PREFIX }}/$image_name
+          docker push ${{ env.IMAGE_PREFIX }}/$image_name
