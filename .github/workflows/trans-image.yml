@@ -12,7 +12,7 @@ jobs:
           docker volume prune -f
       - name: Pull Docker image
         run: |
-          docker pull ${{github.ref}}
+          docker pull ${{ github.ref_name }}
       - name: Log in to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
@@ -21,4 +21,4 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push Docker image
         run: |
-          docker push ${{github.ref}}
+          docker push ${{ github.ref_name }}
