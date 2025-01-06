@@ -1,0 +1,37 @@
+name: trans-on-create-branch
+on:
+  workflow_dispatch:
+    inputs:
+      tag: 
+        description: 'Will pull image tag'
+        required: true
+        default: 'latest'
+        type: string
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  pull_and_push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clean up Docker to free space
+        run: |
+          docker system prune -a -f
+          docker volume prune -f
+      - name: Pull Docker image
+        run: |
+          docker pull ${{ github.ref_name }}:${{ inputs.tag }}
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: reTag and push Docker image
+        run: |
+          image_name=$(basename "${{ github.ref_name }}")
+          full_image_name=${{ env.REGISTRY }}/${{ github.actor }}/$image_name:${{ inputs.tag }}
+          echo "image name is: $image_name, full image name is: $full_image_name"
+          docker tag ${{ github.ref_name }}:${{ inputs.tag }} ${full_image_name}
+          docker push ${full_image_name}
