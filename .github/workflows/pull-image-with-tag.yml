@@ -1,4 +1,4 @@
-name: trans-on-create-branch
+name: pull-image-with-tag
 on:
   workflow_dispatch:
     inputs:
