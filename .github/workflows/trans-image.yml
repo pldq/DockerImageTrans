@@ -13,7 +13,7 @@ jobs:
         run: |
           docker system prune -a -f --volumes
           docker volume prune -f
-          docker image prune -a -f
+          rm -rf /var/lib/docker/tmp/*
       - name: Pull Docker image
         run: |
           docker pull ${{ github.ref_name }}
