@@ -19,6 +19,7 @@ jobs:
         run: |
           docker system prune -a -f
           docker volume prune -f
+          rm -rf /var/lib/docker/tmp/*
       - name: Pull Docker image
         run: |
           docker pull ${{ github.ref_name }}:${{ inputs.tag }}
