@@ -30,7 +30,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: reTag and push Docker image
         run: |
-          image_name=$(basename "${{ github.ref_name }}")
+          # image_name=$(basename "${{ github.ref_name }}")
+          image_name="${{ github.ref_name }}"
           full_image_name=${{ env.REGISTRY }}/${{ github.actor }}/$image_name:${{ inputs.tag }}
           echo "image name is: $image_name, full image name is: $full_image_name"
           docker tag ${{ github.ref_name }}:${{ inputs.tag }} ${full_image_name}
