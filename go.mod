@@ -3,6 +3,7 @@ module image-poller
 go 1.25.0
 
 require (
+	github.com/bmatcuk/doublestar/v4 v4.6.1
 	github.com/buger/goterm v1.0.4
 	github.com/docker/docker v28.5.2+incompatible
 	github.com/glebarez/sqlite v1.11.0

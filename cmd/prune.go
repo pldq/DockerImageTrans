@@ -102,7 +102,7 @@ Use --dry-run to preview what would be deleted without actually deleting.`,
 
 func listResources(ctx context.Context, client github.Client) ([]BranchPackage, error) {
 	fmt.Println("📋 Listing branches...")
-	branches, err := client.ListBranches(ctx, []string{"master", "main"})
+	branches, err := client.ListBranches(ctx, []string{"master", "main", "dependabot/**"})
 	if err != nil {
 		return nil, fmt.Errorf("failed to list branches: %w", err)
 	}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/bmatcuk/doublestar/v4"
 	gh "github.com/google/go-github/v85/github"
 )
 
@@ -60,8 +61,12 @@ func (g *Github) ListBranches(ctx context.Context, excludeBranches []string) ([]
 loop:
 	for _, branch := range branches {
 		name := branch.GetName()
-		for _, exclude := range excludeBranches {
-			if exclude == name {
+		for _, pattern := range excludeBranches {
+			matched, err := doublestar.Match(pattern, name)
+			if err != nil {
+				return names, err
+			}
+			if matched {
 				continue loop
 			}
 		}
