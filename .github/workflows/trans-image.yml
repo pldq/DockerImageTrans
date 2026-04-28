@@ -1,6 +1,8 @@
 name: trans-on-create-branch
 on:
-  create
+  push:
+    branches-ignore:
+      - 'dependabot/**'
 
 env:
   REGISTRY: ghcr.io
