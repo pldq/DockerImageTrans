@@ -7,9 +7,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/docker/docker/api/types/filters"
-	"github.com/docker/docker/api/types/image"
-	"github.com/docker/docker/client"
+	"github.com/moby/moby/client"
 )
 
 // APIClient implements Client using Docker API
@@ -19,7 +17,7 @@ type APIClient struct {
 
 // PullImage pulls an image using Docker API, outputs progress to stdout
 func (c *APIClient) PullImage(ctx context.Context, imageRef string) error {
-	out, err := c.cli.ImagePull(ctx, imageRef, image.PullOptions{})
+	out, err := c.cli.ImagePull(ctx, imageRef, client.ImagePullOptions{})
 	if err != nil {
 		return err
 	}
@@ -46,37 +44,38 @@ func (c *APIClient) PullImage(ctx context.Context, imageRef string) error {
 
 		if msg.ID != "" {
 			if msg.Progress != "" {
-				fmt.Fprintf(os.Stdout, "%s: %s %s\n", msg.ID, msg.Status, msg.Progress)
+				_, _ = fmt.Fprintf(os.Stdout, "%s: %s %s\n", msg.ID, msg.Status, msg.Progress)
 			} else {
-				fmt.Fprintf(os.Stdout, "%s: %s\n", msg.ID, msg.Status)
+				_, _ = fmt.Fprintf(os.Stdout, "%s: %s\n", msg.ID, msg.Status)
 			}
 		} else if msg.Status != "" {
-			fmt.Fprintln(os.Stdout, msg.Status)
+			_, _ = fmt.Fprintln(os.Stdout, msg.Status)
 		}
 	}
 
-	fmt.Fprintln(os.Stdout, "Pull complete")
+	_, _ = fmt.Fprintln(os.Stdout, "Pull complete")
 	return nil
 }
 
 // TagImage tags an image using Docker API
 func (c *APIClient) TagImage(ctx context.Context, sourceRef, targetRef string) error {
-	return c.cli.ImageTag(ctx, sourceRef, targetRef)
+	_, err := c.cli.ImageTag(ctx, client.ImageTagOptions{
+		Source: sourceRef,
+		Target: targetRef,
+	})
+	return err
 }
 
 // GetImageSize returns image size using Docker API
 func (c *APIClient) GetImageSize(ctx context.Context, imageRef string) (int64, error) {
-	images, err := c.cli.ImageList(ctx, image.ListOptions{
-		Filters: filters.NewArgs(filters.KeyValuePair{
-			Key:   "reference",
-			Value: imageRef,
-		}),
+	images, err := c.cli.ImageList(ctx, client.ImageListOptions{
+		Filters: make(client.Filters).Add("reference", imageRef),
 	})
 	if err != nil {
 		return 0, err
 	}
-	if len(images) == 0 {
+	if len(images.Items) == 0 {
 		return 0, fmt.Errorf("image not found: %s", imageRef)
 	}
-	return images[0].Size, nil
+	return images.Items[0].Size, nil
 }

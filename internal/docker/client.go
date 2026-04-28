@@ -3,7 +3,7 @@ package docker
 import (
 	"context"
 
-	"github.com/docker/docker/client"
+	"github.com/moby/moby/client"
 )
 
 // Client defines the interface for Docker operations
@@ -24,7 +24,7 @@ func NewClient(cliMode bool, host string) (Client, error) {
 		opts = []client.Opt{client.WithHost(host)}
 	}
 
-	apiCli, err := client.NewClientWithOpts(opts...)
+	apiCli, err := client.New(opts...)
 	if err != nil {
 		return nil, err
 	}
